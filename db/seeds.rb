@@ -30,4 +30,6 @@ call_url = BASE_URL+API_KEY+other_params
 request = HTTParty.get(call_url).to_json
 @request_hash = JSON.parse(request)
 
-
+f = File.new('results.json', 'w')
+f << @request_hash.to_json
+f.close
