@@ -16,17 +16,21 @@ User.destroy_all
     User.create(person)
 end
 
+def get_data(call_url)
+    request = HTTParty.get(call_url).to_json
+    return JSON.parse(request)
+end
+
 #gets a list of movies
 discover_URL = "https://api.themoviedb.org/3/discover/movie?"
 api_key = ENV['API_KEY']
 other_params = "&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=true&page=1"
 call_url = discover_URL+api_key+other_params
-request = HTTParty.get(call_url).to_json
-request_hash = JSON.parse(request)
+request_hash = get_data(call_url) 
 
-# f = File.new('results.json', 'w') NOT NEEDED; PUTS THE RESULT IN A FILE
-# f << request_hash.to_json
-# f.close
+f = File.new('results.json', 'w') #NOT NEEDED; PUTS THE RESULT IN A FILE
+f << request_hash.to_json
+f.close
 
 #get the ids of all the movies so we can get the detail of each movie by api call
 movies_id = request_hash["results"].map{ |movie| movie["id"] }
@@ -37,8 +41,7 @@ additional_params = "&language=en-US&append_to_response=videos,images"
 movies_id.map{ |id|
     movie_id = "#{id}?"
     call_url = movie_url+movie_id+api_key+additional_params
-    request = HTTParty.get(call_url).to_json
-    movie_hash = JSON.parse(request)
+    movie_hash = get_data(call_url)
     title = movie_hash["title"]
     overview = movie_hash["overview"]
     release_date = movie_hash["release_date"]
@@ -56,3 +59,4 @@ movies_id.map{ |id|
         this_movie.genres.push(this_genre)
     }
 }
+
