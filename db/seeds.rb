@@ -13,23 +13,41 @@ User.destroy_all
     User.create(person)
 end
 
-3.times do
-    title = Faker::Movie.title
-    overview = Faker::Movie.quote
-    release_date = Faker::Date.forward(days: 23)
-    runtime = Faker::Alphanumeric.alpha(number: 10)
-    # genres = [Faker::Music.genre, Faker::Music.genre]
-    movie = {title: title, overview: overview, release_date: release_date, runtime: runtime}
-    Movie.create(movie)
-end
-
-BASE_URL = "https://api.themoviedb.org/3/discover/movie?"
-API_KEY = ENV['API_KEY']
-other_params = "&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1"
-call_url = BASE_URL+API_KEY+other_params
+#gets a list of movies
+discover_URL = "https://api.themoviedb.org/3/discover/movie?"
+api_key = ENV['API_KEY']
+other_params = "&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=true&page=1"
+call_url = discover_URL+api_key+other_params
 request = HTTParty.get(call_url).to_json
-@request_hash = JSON.parse(request)
+request_hash = JSON.parse(request)
 
-f = File.new('results.json', 'w')
-f << @request_hash.to_json
-f.close
+# f = File.new('results.json', 'w') NOT NEEDED; PUTS THE RESULT IN A FILE
+# f << request_hash.to_json
+# f.close
+
+#get the ids of all the movies so we can get the detail of each movie by api call
+movies_id = request_hash["results"].map{ |movie| movie["id"] }
+movie_url = "https://api.themoviedb.org/3/movie/"
+additional_params = "&language=en-US&append_to_response=videos,images"
+
+#map through the movie_ids and call for the detail of each movie
+movies_id.map{ |id|
+    movie_id = "#{id}?"
+    call_url = movie_url+movie_id+api_key+additional_params
+    request = HTTParty.get(call_url).to_json
+    movie_hash = JSON.parse(request)
+    title = movie_hash["title"]
+    overview = movie_hash["overview"]
+    release_date = movie_hash["release_date"]
+    runtime = "#{movie_hash["runtime"]} mins"
+    src = "https://www.youtube.com/watch?v=#{movie_hash["videos"]["results"][0]["key"]}"
+    movie = {title: title, overview: overview, release_date: release_date, runtime: runtime, src: src}
+    Movie.create(movie)
+
+    # f = File.new("movie#{id}.json", 'w')
+    # f << movie_hash.to_json
+    # f.close
+}
+# puts movies_id
+
+
