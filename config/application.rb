@@ -1,5 +1,8 @@
 require_relative "boot"
 
+# require 'dotenv/load'
+
+
 require "rails"
 # Pick the frameworks you want:
 require "active_model/railtie"
@@ -12,17 +15,21 @@ require "action_mailbox/engine"
 require "action_text/engine"
 require "action_view/railtie"
 require "action_cable/engine"
+
 # require "sprockets/railtie"
 # require "rails/test_unit/railtie"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
+# require 'dotenv'
 
 module NetpixBackend
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.1
+    Dotenv::Railtie.load
+    # config.my_key = ENV('API_KEY')
 
     # Configuration for the application, engines, and railties goes here.
     #
@@ -38,3 +45,4 @@ module NetpixBackend
     config.api_only = true
   end
 end
+
