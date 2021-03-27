@@ -44,10 +44,6 @@ movies_id.map{ |id|
     movie = {title: title, overview: overview, release_date: release_date, runtime: runtime, src: src}
     Movie.create(movie)
 
-    # f = File.new("movie#{id}.json", 'w')
-    # f << movie_hash.to_json
-    # f.close
+    #create the genre and associate it with a movie
+    #implementation
 }
-# puts movies_id
-
-
