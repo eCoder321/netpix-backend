@@ -1,6 +1,9 @@
 require 'faker'
 require 'HTTParty'
 
+GenreMovie.destroy_all
+List.destroy_all
+Genre.destroy_all
 Movie.destroy_all
 Show.destroy_all
 User.destroy_all
@@ -40,10 +43,15 @@ movies_id.map{ |id|
     overview = movie_hash["overview"]
     release_date = movie_hash["release_date"]
     runtime = "#{movie_hash["runtime"]} mins"
-    src = "https://www.youtube.com/watch?v=#{movie_hash["videos"]["results"][0]["key"]}"
+    #TODO: there's more than one src, create a table and get them all later
+    src = "https://www.youtube.com/watch?v=#{movie_hash["videos"]["results"][0]["key"]}" if movie_hash["videos"]["results"][0]["site"] == "YouTube"
     movie = {title: title, overview: overview, release_date: release_date, runtime: runtime, src: src}
-    Movie.create(movie)
+    this_movie = Movie.create(movie)
 
     #create the genre and associate it with a movie
-    #implementation
+    movie_hash["genres"].map {
+        |genre|
+        this_genre = Genre.find_or_create_by(name: genre["name"])
+        this_movie.genres.push(this_genre)
+    }
 }
