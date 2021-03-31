@@ -47,7 +47,7 @@ movies_id.map{ |id|
     release_date = movie_hash["release_date"]
     runtime = "#{movie_hash["runtime"]} mins"
     #TODO: there's more than one src, create a table and get them all later; also many images...
-    src = "https://www.youtube.com/watch?v=#{movie_hash["videos"]["results"][0]["key"]}" if movie_hash["videos"]["results"][0]["site"] == "YouTube"
+    src = "https://www.youtube.com/embed/#{movie_hash["videos"]["results"][0]["key"]}" if movie_hash["videos"]["results"][0]["site"] == "YouTube"
     image_src = "https://image.tmdb.org/t/p/original#{movie_hash["backdrop_path"]}"
     movie = {title: title, overview: overview, release_date: release_date, runtime: runtime, src: src, image_src: image_src}
     this_movie = Movie.create(movie)
