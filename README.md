@@ -1,7 +1,7 @@
 # README
 
 ---
-This is the backend of NetPix, which is a modified netflix clone. 
+This is the backend of NetPix, which is a modified netflix clone. (Access the frontend here: https://github.com/puifaiba/netpix-frontend )
 Backend is based on Ruby on Rails.  
 Makes calls to external APIs to retrieve movie and genre information, as well as persist user data.
 
